@@ -3,11 +3,13 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Auth from './pages/Auth.jsx'
 import axios from 'axios'
+import {useDispatch} from "react-redux";
+import { setUserData } from './redux/userSlice.js'
 
 
 export const ServerUrl  = "http://localhost:8000"
 const App = () => {
-
+const dispatch = useDispatch();
 
   useEffect(()=>{
     const  getUser = async()=>{
@@ -15,6 +17,8 @@ const App = () => {
          const result =  await axios.get(ServerUrl + "/api/user/current-user" , {
         withCredentials : true
       });
+      dispatch(setUserData(result.data));
+
       console.log(result.data);
       }catch(err){
         console.log(err);
