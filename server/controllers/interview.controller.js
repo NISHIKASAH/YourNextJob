@@ -1,6 +1,6 @@
 import fs from "fs"
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs"
-import { askAi } from "../Services/openRouter.service";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import { askAi } from "../Services/openRouter.service.js";
 
 export const analyzeResume = async (req, res) => {
     try {
@@ -13,8 +13,9 @@ export const analyzeResume = async (req, res) => {
         }
         const filepath = req.file.path;
         const fileBuffer = await fs.promises.readFile(filepath);
+        const uint8Array = new Uint8Array(fileBuffer)
 
-        const pdf = await pdfjsLib.getDocument({ data: Uint8Array }).promise;
+        const pdf = await pdfjsLib.getDocument({ data: uint8Array }).promise;
 
         let resumeText = "";
 
@@ -54,6 +55,7 @@ Return strictly JSON:
 
 
         const aiResponse = await askAi(messages);
+
 
         const parsed = JSON.parse(aiResponse);
 

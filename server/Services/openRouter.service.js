@@ -6,36 +6,32 @@ import { application } from "express";
 
 export const askAi = async(messages)=>{
 
-    try{
-        if(!messages || !Array.isArray(messages) || messages.length() == 0 ){
-            throw new Error("Message array is empty ");
-
+    try {
+        if(!messages || !Array.isArray(messages) || messages.length === 0) {
+            throw new Error("Messages array is empty.");
         }
+        const response = await axios.post("https://openrouter.ai/api/v1/chat/completions",
+            {
+                model: "openai/gpt-4o-mini",
+                messages: messages
 
-        const response =  await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-          model: "openai/gpt-4o-mini",
-          messages : messages
-        } , {
-            headers : {
-                Authorization : `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                "Content-Type" : 'application/json'
             },
-        })
+            {
+            headers: {
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json',
+        },});
 
         const content = response?.data?.choices?.[0]?.message?.content;
 
-        if(!content ||  !content.trim()) {
-            throw new Error("AI return empty response");
-        }
-        return content;
+        if (!content || !content.trim()) {
+      throw new Error("AI returned empty response.");
+    }
 
-    }catch(error){
-        console.log(
-            
-            "openRouterAI Error" , error.response?.data || error.messages 
-        );
-
-        throw new Error("openRouter API error");
+    return content
+    } catch (error) {
+            console.error("OpenRouter Error:", error.response?.data || error.message);
+    throw new Error("OpenRouter API Error");
 
     }
 }
