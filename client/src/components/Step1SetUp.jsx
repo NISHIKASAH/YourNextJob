@@ -3,68 +3,87 @@ import { motion } from "motion/react"
 import { useState } from "react";
 import axios from "axios"
 import {
-  FaUserTie,
-  FaBriefcase,
-  FaFileUpload,
-  FaMicrophoneAlt,
-  FaChartLine,
+    FaUserTie,
+    FaBriefcase,
+    FaFileUpload,
+    FaMicrophoneAlt,
+    FaChartLine,
 } from "react-icons/fa";
 import { ServerUrl } from '../App';
 import { BsMenuButton, BsSnapchat } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 function Step1SetUp({ onStart }) {
 
-  const [role, setRole] = useState("");
-  const [experience, setExperience] = useState("");
-  const [mode, setMode] = useState("Technical");
-  const [resumeFile, setResumeFile] = useState(null)
-  const [loading, setLoading] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [skills, setSkills] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [analysisDone, setAnalysingisDone] = useState(false);
-  const [resumeText, setResumeText] = useState("");
+    const [role, setRole] = useState("");
+    const [experience, setExperience] = useState("");
+    const [mode, setMode] = useState("Technical");
+    const [resumeFile, setResumeFile] = useState(null)
+    const [loading, setLoading] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
+    const [skills, setSkills] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [analysisDone, setAnalysingisDone] = useState(false);
+    const [resumeText, setResumeText] = useState("");
+
+    const dispatch = useDispatch();
+
+    const { userdata } = useSelector((state) => state.user);
+
+    const handleUploadResume = async () => {
+        if (analyzing || !resumeFile) {
+            return;
+
+        }
+        setAnalyzing(true);
+        const formdata = new FormData;
+        formdata.append("resume", resumeFile);
+        try {
+            console.log("resume uploaded");
+
+            const result = await axios.post(ServerUrl + "/api/interview/resume", formdata, {
+                withCredentials: true
+            });
+
+            setAnalyzing(false);
+            setRole(result.data.role || "");
+            setExperience(result.data.experience || []);
+            setProjects(result.data.projects || []);
+            setResumeText(result.data.resumeText || "");
+            setSkills(result.data.skills || [])
+            setAnalysingisDone(true);
+
+        }
+        catch (error) {
+            setAnalyzing(false);
+            console.log(error.message);
+
+        }
 
 
-  const handleUploadResume = async () => {
-    if( analyzing || !resumeFile){
-      return ;
-     
     }
-     setAnalyzing(true);
-     const formdata = new FormData;
-      formdata.append("resume" , resumeFile);
-    try {
-      console.log("resume uploaded");
-      
-      const result = await axios.post(ServerUrl + "/api/interview/resume", formdata, {
-        withCredentials: true
-      });
-          
-      setAnalyzing(false);
-      setRole(result.data.role || "");
-      setExperience(result.data.experience || []);
-      setProjects(result.data.projects || []);
-      setResumeText(result.data.resumeText || "");
-      setSkills(result.data.skills || [])
-      setAnalysingisDone(true);
+
+    const handleStart = async () => {
+         setLoading(true)
+        try {
+           const result = await axios.post(ServerUrl + "/api/interview/generate-questions" , {role, experience, mode , resumeText, projects, skills } , {withCredentials:true}) 
+           console.log(result.data)
+           if(userdata){
+            dispatch(setUserData({...userdata , credits:result.data.creditsLeft}))
+           }
+           setLoading(false)
+           onStart(result.data)
+
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
 
     }
-    catch (error) {
-      setAnalyzing(false);
-      console.log(error.message);
-      
-    }
 
-
-  }
-
-  const handleStart = ()=>{
-    console.log("start interview");
-  }
-
-  return (
-<motion.div
+    return (
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -166,7 +185,7 @@ function Step1SetUp({ onStart }) {
 
                         </select>
 
-                        { !analysisDone && (
+                        {!analysisDone && (
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
                                 onClick={() => document.getElementById("resumeUpload").click()}
@@ -184,7 +203,7 @@ function Step1SetUp({ onStart }) {
                                     {resumeFile ? resumeFile.name : "Click to upload resume (Optional)"}
                                 </p>
 
-                                { resumeFile && (
+                                {resumeFile && (
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         onClick={(e) => {
@@ -204,7 +223,7 @@ function Step1SetUp({ onStart }) {
 
                         )}
 
-                        { analysisDone && (
+                        {analysisDone && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -243,12 +262,12 @@ function Step1SetUp({ onStart }) {
 
 
                         <motion.button
-                        onClick={handleStart}
+                            onClick={handleStart}
                             disabled={!role || !experience || loading}
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.95 }}
                             className='w-full disabled:bg-gray-600 bg-green-600 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md'>
-                            {loading ? "Staring...":"Start Interview"}
+                            {loading ? "Staring..." : "Start Interview"}
 
 
                         </motion.button>
@@ -259,11 +278,11 @@ function Step1SetUp({ onStart }) {
 
         </motion.div>
 
-  )
+    )
 
 
 }
 
-    
+
 
 export default Step1SetUp
