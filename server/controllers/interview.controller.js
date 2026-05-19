@@ -231,7 +231,8 @@ Make questions based on the candidate’s role, experience,interviewMode, projec
 export const submitAnswer = async (req, res) => {
     try {
 
-        const [interviewId, questionIndex, answer, timeTaken] = req.body;
+        const { interviewId, questionIndex, answer, timeTaken } = req.body;
+        console.log("ans from submit", req.body);
 
         const interview = await Interview.findById(interviewId);
 
