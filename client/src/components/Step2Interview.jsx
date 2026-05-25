@@ -390,7 +390,7 @@ const [, setIsListening] = useState(false);
       //   finishInterview();
       //   return;
       // }
-      if (currIndex + 1 >= 1) {
+      if (currIndex + 1 >= questions.length) {
         console.log("Interview finished");
         finishInterview();
         return;
@@ -413,6 +413,7 @@ const [, setIsListening] = useState(false);
       const result = await axios.post(ServerUrl + "/api/interview/finish", { interviewId }, { withCredentials: true })
       console.log("interview result", result);
       onFinish(result.data)
+      
     } catch (error) {
       console.log("while finishing interview ", error);
     }

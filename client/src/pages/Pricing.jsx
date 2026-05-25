@@ -3,11 +3,17 @@ import { useState } from 'react'
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { motion } from "motion/react"
+import axios from 'axios';
+import { ServerUrl } from '../App';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 function Pricing() {
 
     const [selectedPlan, setSelectedPlan] = useState("default");
+    const [loadingPlan, setLoadingPlan] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
 
     const plans = [
@@ -53,6 +59,64 @@ function Pricing() {
             badge: "Best Value",
         },
     ];
+
+    const handlePayment = async (plan) => {
+        try {
+
+            const amount = plan.id === "basic" ? 100 : 500;
+            setLoadingPlan(plan.id);
+
+            const result = await axios.post(`${ServerUrl}/api/payment/order`, {
+                planId: plan.id,
+                credits: plan.credits,
+                amount: amount
+
+
+            }, {
+                withCredentials: true
+            })
+
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: result.data.amount,
+                currency: result.data.currency,
+                name: 'Your Next Job IQ',
+               description: `${plan.name} - ${plan.credits} Credits`,
+                order_id: result.data.id,
+
+
+                handler: async (response) => {
+                    const verifyRes = await axios.post(`${ServerUrl}/api/payment/verify`,
+                        response, {
+                        withCredentials: true
+                    }
+                    );
+                    dispatch(setUserData(verifyRes.data.user))
+                    navigate("/");
+
+                },
+                theme: {
+                    color: "#10b981",
+                },
+
+
+
+
+            }
+            setLoadingPlan(null);
+
+            const rzp = new window.Razorpay(options)
+
+            rzp.open()
+        }
+
+        catch (err) {
+            console.log("error in payment", err);
+            setLoadingPlan(null);
+        }
+
+    }
 
 
     return (
@@ -139,8 +203,43 @@ function Pricing() {
                                     ))}
                                 </div>
 
+                                {/* {
+                                    isSelected && (
+                                        <motion.button
+                                            onClick={() => handlePayment(plan)}
+                                            whileHover={{ scale: 1.05 }}
+                                            className="mt-8 w-full bg-emerald-600 text-white py-3 rounded-lg shadow hover:bg-emerald-700 transition"
+                                        >
+                                            Proceed to Payment
+                                        </motion.button>
+                                    )
+
+                                } */}
                                 {
-                                    
+                                    !plan.default && (
+                                        <button
+                                        disabled={
+                                            loadingPlan === plan.id
+                                        }
+                                         onClick={ (e)=> {
+                                           e.stopPropagation();
+                                           if(!isSelected){
+                                            setSelectedPlan(plan.id);
+                                           
+                                           }
+                                           else{
+                                             handlePayment(plan);
+                                           }
+                                         }}
+                                          className="mt-8 w-full bg-emerald-600 text-white py-3 rounded-lg shadow hover:bg-emerald-700 transition"
+                                        >
+                                            {
+                                                loadingPlan === plan.id ? "Processing..." : 
+                                                isSelected ? "Proceed to payment" : "Select Plan"
+                                            }
+
+                                        </button>
+                                    )
                                 }
                             </motion.div>
                         )

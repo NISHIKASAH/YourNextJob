@@ -2,6 +2,7 @@ import React from 'react'
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 
 function Step3Report({ report }) {
 
@@ -163,6 +164,9 @@ function Step3Report({ report }) {
       <div className='mx-auto w-full max-w-4xl space-y-6'>
         <div className='rounded-3xl border border-gray-200 bg-white shadow-sm'>
           <div className='rounded-3xl bg-emerald-600 px-6 py-5 text-white'>
+             <button
+            onClick={() => navigate("/")}
+            className='mt-1 p-3 mb-3 rounded-full bg-white shadow hover:shadow-md transition'><FaArrowLeft className='text-gray-600' /></button>
             <div className='flex items-center justify-between'>
               <div>
                 <p className='text-xs uppercase tracking-[0.24em] text-emerald-100/80'>Interview report</p>
@@ -171,12 +175,7 @@ function Step3Report({ report }) {
             <div
             className='display flex gap-5'
             >
-               <button
-                type='button'
-                onClick={()=>navigate('/')}
-                className='rounded-xl bg-white px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100'>
-                 Home
-              </button>
+        
               <button
                 type='button'
                 onClick={generatePDF}

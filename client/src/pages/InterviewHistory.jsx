@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { ServerUrl } from '../App.jsx'
 import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 
 function InterviewHistory() {
 
@@ -24,7 +25,11 @@ function InterviewHistory() {
         <div className='min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8'>
             <div className='mx-auto w-full max-w-6xl space-y-8'>
                 <header className='rounded-[32px] border border-gray-200 bg-white p-8 shadow-sm'>
+                    <button
+                                    onClick={() => navigate("/")}
+                                    className='mt-1 p-3 mb-3 rounded-full bg-white shadow hover:shadow-md transition'><FaArrowLeft className='text-gray-600' /></button>
                     <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+                         
                         <div>
                             <p className='text-sm uppercase tracking-[0.28em] text-emerald-600'>Interview history</p>
                             <h1 className='mt-3 text-3xl font-semibold text-slate-900'>Your latest mock interview sessions</h1>

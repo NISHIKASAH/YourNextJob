@@ -9,10 +9,12 @@ import {
     FaMicrophoneAlt,
     FaChartLine,
 } from "react-icons/fa";
+import { FaArrowLeft } from 'react-icons/fa';
 import { ServerUrl } from '../App';
 import { BsMenuButton, BsSnapchat } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 function Step1SetUp({ onStart }) {
 
@@ -28,6 +30,8 @@ function Step1SetUp({ onStart }) {
     const [resumeText, setResumeText] = useState("");
 
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const { userdata } = useSelector((state) => state.user);
 
@@ -83,19 +87,29 @@ function Step1SetUp({ onStart }) {
     }
 
     return (
+        
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
+
             className='min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4'>
 
             <div className='w-full max-w-4xl bg-white rounded-3xl shadow-2xl grid md:grid-cols-2 overflow-hidden'>
+
+               
 
                 <motion.div
                     initial={{ x: -80, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.7 }}
                     className='relative bg-gradient-to-br from-green-50 to-green-100 p-12 flex flex-col justify-center'>
+
+                        <div>
+                             <button
+                                    onClick={() => navigate("/")}
+                                    className='mt-1 p-3 mb-3 rounded-full bg-white shadow hover:shadow-md transition'><FaArrowLeft className='text-gray-600' /></button>
+                        </div>
 
                     <h2 className="text-4xl font-bold text-gray-800 mb-6">
                         Start Your AI Interview
