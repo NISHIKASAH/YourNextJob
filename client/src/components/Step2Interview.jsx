@@ -385,7 +385,12 @@ const [, setIsListening] = useState(false);
       setFeedback("");
       startMic();
 
-      if (currIndex + 1 >= questions.length) {
+      // if (currIndex + 1 >= questions.length) {
+      //   console.log("Interview finished");
+      //   finishInterview();
+      //   return;
+      // }
+      if (currIndex + 1 >= 1) {
         console.log("Interview finished");
         finishInterview();
         return;
