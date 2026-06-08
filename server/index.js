@@ -12,7 +12,6 @@ import paymentRouter from "./routes/payment.route.js";
 
 const app =  express();
 const PORT  =  process.env.PORT  || 6000 ; 
-import cors from "cors";
 
 app.use(cors({
     origin: [
