@@ -12,12 +12,16 @@ import paymentRouter from "./routes/payment.route.js";
 
 const app =  express();
 const PORT  =  process.env.PORT  || 6000 ; 
+import cors from "cors";
+
 app.use(cors({
-    origin : [
-        "https://yournextjob-1.onrender.com/",
+    origin: [
         "http://localhost:5173",
+        "https://yournextjob-1.onrender.com"
     ],
-    credentials : true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
