@@ -15,6 +15,7 @@
     "axios": "^1.13.6",
     "firebase": "^12.10.0",
     "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "motion": "^12.36.0",
     "react": "^19.2.4",
     "react-circular-progressbar": "^2.2.0",
