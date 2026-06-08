@@ -11,7 +11,7 @@ import InterviewReport from './pages/InterviewReport.jsx'
 import Pricing from './pages/Pricing.jsx'
 
 
-export const ServerUrl  = "http://localhost:8000"
+export const ServerUrl  = "https://yournextjob.onrender.com"
 const App = () => {
 const dispatch = useDispatch();
 
